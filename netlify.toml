@@ -1,0 +1,28 @@
+[build]
+  # Base directory is the root of the repository
+  base = "."
+  
+  # Publish directory is where the built frontend files will be
+  publish = "movie-review-frontend/movie-review-frontend/build"
+  
+  # Build command to run before deployment
+  command = "cd movie-review-frontend/movie-review-frontend && npm install && npm run build"
+
+[build.environment]
+  # Set Node.js version
+  NODE_VERSION = "18"
+
+# Redirect rules for React Router
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers for security and performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin" 
