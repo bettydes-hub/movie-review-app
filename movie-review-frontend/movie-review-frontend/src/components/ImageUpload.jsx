@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { FaUpload, FaImage, FaTimes } from 'react-icons/fa';
+import { FaUpload, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 const ImageUpload = ({ onImageSelected, currentImage }) => {
-  const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(currentImage || null);
-  const [isUploading, setIsUploading] = useState(false);
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
@@ -24,8 +22,6 @@ const ImageUpload = ({ onImageSelected, currentImage }) => {
       return;
     }
 
-    setSelectedFile(file);
-    
     // Create preview
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -39,7 +35,6 @@ const ImageUpload = ({ onImageSelected, currentImage }) => {
   };
 
   const handleRemoveImage = () => {
-    setSelectedFile(null);
     setPreview(null);
     onImageSelected(null);
     

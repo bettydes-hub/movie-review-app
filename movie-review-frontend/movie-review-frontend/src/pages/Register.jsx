@@ -380,11 +380,11 @@ const Register = () => {
           <div className="mt-6 text-center text-sm text-gray-600">
             <p>
               By creating an account, you agree to our{' '}
-              <a href="#" className="text-blue-600 hover:text-blue-500">
+              <a href="/terms" className="text-blue-600 hover:text-blue-500">
                 Terms of Service
               </a>{' '}
               and{' '}
-              <a href="#" className="text-blue-600 hover:text-blue-500">
+              <a href="/privacy" className="text-blue-600 hover:text-blue-500">
                 Privacy Policy
               </a>
             </p>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaCalendar, FaTag, FaStar, FaUsers, FaTrash, FaEdit } from 'react-icons/fa';
 import ReviewForm from '../components/ReviewForm';
@@ -23,24 +23,7 @@ const MovieDetails = () => {
   const [userRating, setUserRating] = useState(0);
   const [hasRated, setHasRated] = useState(false);
 
-  useEffect(() => {
-    console.log('🎬 MovieDetails useEffect triggered with ID:', id);
-    console.log('🎬 ID type:', typeof id);
-    
-    // Validate ID before making API calls
-    if (!id || id === 'undefined' || id === 'null') {
-      console.error('❌ Invalid movie ID:', id);
-      setLoading(false);
-      setReviewsLoading(false);
-      return;
-    }
-    
-    fetchMovieDetails();
-    fetchReviews();
-    fetchSimilarMovies();
-  }, [id]);
-
-  const fetchMovieDetails = async () => {
+  const fetchMovieDetails = useCallback(async () => {
     try {
       console.log('🔍 Fetching movie details for ID:', id);
       
@@ -60,9 +43,9 @@ const MovieDetails = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       // Double-check ID validation
       if (!id || id === 'undefined' || id === 'null') {
@@ -96,9 +79,9 @@ const MovieDetails = () => {
     } finally {
       setReviewsLoading(false);
     }
-  };
+  }, [id, isAuthenticated, user]);
 
-  const fetchSimilarMovies = async () => {
+  const fetchSimilarMovies = useCallback(async () => {
     try {
       // Double-check ID validation
       if (!id || id === 'undefined' || id === 'null') {
@@ -121,7 +104,26 @@ const MovieDetails = () => {
     } finally {
       setSimilarMoviesLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    console.log('🎬 MovieDetails useEffect triggered with ID:', id);
+    console.log('🎬 ID type:', typeof id);
+    
+    // Validate ID before making API calls
+    if (!id || id === 'undefined' || id === 'null') {
+      console.error('❌ Invalid movie ID:', id);
+      setLoading(false);
+      setReviewsLoading(false);
+      return;
+    }
+    
+    fetchMovieDetails();
+    fetchReviews();
+    fetchSimilarMovies();
+  }, [id, fetchMovieDetails, fetchReviews, fetchSimilarMovies]);
+
+
 
   const handleReviewSubmitted = () => {
     fetchReviews();

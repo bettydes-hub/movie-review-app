@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import MovieCard from '../components/MovieCard';
@@ -25,7 +25,7 @@ const MovieList = () => {
     fetchMovies();
     fetchCategories();
     testBackendConnection();
-  }, [filters]);
+  }, [filters, fetchMovies, fetchCategories, testBackendConnection]);
 
   // Refresh movies when component comes into focus (e.g., after adding a movie)
   useEffect(() => {
@@ -37,7 +37,7 @@ const MovieList = () => {
 
     window.addEventListener('focus', handleFocus);
     return () => window.removeEventListener('focus', handleFocus);
-  }, []);
+  }, [fetchMovies, fetchCategories]);
 
   // Generate suggestions from existing movies
   const generateSuggestions = (input) => {
@@ -116,7 +116,7 @@ const MovieList = () => {
     setSearchParams(newSearchParams);
   };
 
-  const fetchMovies = async () => {
+  const fetchMovies = useCallback(async () => {
     setLoading(true);
     try {
       const params = {
@@ -161,9 +161,9 @@ const MovieList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       console.log('🌐 Fetching categories...');
       const response = await categoriesAPI.getAll();
@@ -175,7 +175,7 @@ const MovieList = () => {
       console.error('❌ Error status:', error.response?.status);
       setCategories([]);
     }
-  };
+  }, []);
 
   const handleFilterChange = (key, value) => {
     const newFilters = { ...filters, [key]: value };
@@ -189,7 +189,7 @@ const MovieList = () => {
     setSearchParams(newSearchParams);
   };
 
-  const testBackendConnection = async () => {
+  const testBackendConnection = useCallback(async () => {
     try {
       console.log('🔗 Testing backend connection...');
       const response = await fetch('http://localhost:3000/api/health');
@@ -198,7 +198,7 @@ const MovieList = () => {
       console.error('❌ Backend connection failed:', error);
       console.log('💡 Make sure your backend server is running on port 3000');
     }
-  };
+  }, []);
 
   if (loading) {
     return <Loader text="Loading movies..." />;

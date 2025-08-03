@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import Loader from './Loader';
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
-  const { user, loading, isAuthenticated, isAdmin } = useAuth();
+  const { loading, isAuthenticated, isAdmin } = useAuth();
 
   if (loading) {
     return <Loader />;
