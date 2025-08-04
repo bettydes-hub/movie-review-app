@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaUsers, FaUserPlus, FaUserEdit, FaTrash, FaEye, FaEyeSlash, FaCheck, FaTimes, FaExclamationTriangle, FaTags } from 'react-icons/fa';
+import { FaUsers, FaUserPlus, FaTrash, FaEye, FaEyeSlash, FaCheck, FaTimes, FaExclamationTriangle, FaTags } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
@@ -11,7 +11,6 @@ const AdminDashboard = () => {
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddAdminForm, setShowAddAdminForm] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
@@ -147,7 +146,7 @@ const AdminDashboard = () => {
     }
 
     try {
-      const response = await api.post('/users/admin', {
+      await api.post('/users/admin', {
         name: formData.name.trim(),
         email: formData.email.trim(),
         password: formData.password

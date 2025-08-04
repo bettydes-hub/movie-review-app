@@ -26,8 +26,6 @@ const AddMovie = () => {
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     console.log('🎬 AddMovie component mounted, fetching categories...');
@@ -78,17 +76,7 @@ const AddMovie = () => {
     }
   };
 
-  const handleImageSelected = (file) => {
-    setSelectedImage(file);
-    
-    // Clear image error when user selects an image
-    if (errors.image) {
-      setErrors(prev => ({
-        ...prev,
-        image: ''
-      }));
-    }
-  };
+
 
   const validateForm = () => {
     const newErrors = {};
@@ -124,14 +112,7 @@ const AddMovie = () => {
     return newErrors;
   };
 
-  const isValidUrl = (string) => {
-    try {
-      new URL(string);
-      return true;
-    } catch (_) {
-      return false;
-    }
-  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
