@@ -26,6 +26,8 @@ const AddMovie = () => {
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     console.log('🎬 AddMovie component mounted, fetching categories...');
