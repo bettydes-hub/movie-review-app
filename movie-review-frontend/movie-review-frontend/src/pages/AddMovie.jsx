@@ -38,8 +38,8 @@ const AddMovie = () => {
   const testBackendConnection = async () => {
     try {
       console.log('🔗 Testing backend connection...');
-      const response = await fetch('http://localhost:3000/api/categories');
-      console.log('✅ Backend is accessible:', response.status);
+      await fetch('http://localhost:3000/api/categories');
+      console.log('✅ Backend is accessible');
     } catch (error) {
       console.error('❌ Backend connection failed:', error);
       toast.error('Cannot connect to server. Please make sure the backend is running.');
@@ -183,9 +183,9 @@ const AddMovie = () => {
         }
       }
 
-      const response = await moviesAPI.create(movieFormData);
+      await moviesAPI.create(movieFormData);
       
-      console.log('✅ Movie created successfully:', response.data);
+      console.log('✅ Movie created successfully!');
       toast.success('Movie added successfully!');
       
       // Reset form

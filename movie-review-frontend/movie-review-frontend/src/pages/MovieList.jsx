@@ -21,11 +21,83 @@ const MovieList = () => {
     sortOrder: searchParams.get('sortOrder') || 'asc'
   });
 
+  const fetchMovies = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = {
+        search: filters.search,
+        category: filters.category,
+        sortBy: filters.sortBy,
+        sortOrder: filters.sortOrder
+      };
+      
+      console.log('🎬 Fetching movies with params:', params);
+      const response = await moviesAPI.getAll(params);
+      console.log('🎬 Movies API response:', response);
+      console.log('🎬 Movies data:', response.data);
+      
+      const moviesData = response.data.movies || response.data;
+      console.log('🎬 Final movies array:', moviesData);
+      console.log('🎬 Number of movies:', moviesData.length);
+      
+      if (moviesData.length > 0) {
+        console.log('🎬 First movie sample:', {
+          id: moviesData[0].id,
+          title: moviesData[0].title,
+          image: moviesData[0].image ? moviesData[0].image.substring(0, 50) + '...' : 'No image',
+          imageLength: moviesData[0].image ? moviesData[0].image.length : 0
+        });
+      }
+      
+      setMovies(moviesData);
+    } catch (error) {
+      console.error('❌ Error fetching movies:', error);
+      console.error('❌ Error response:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
+      
+      // Show user-friendly error
+      if (error.response?.status === 404) {
+        console.log('❌ API endpoint not found - check if backend is running');
+      } else if (error.code === 'ERR_NETWORK') {
+        console.log('❌ Network error - cannot connect to backend');
+      }
+      
+      setMovies([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [filters]);
+
+  const fetchCategories = useCallback(async () => {
+    try {
+      console.log('🌐 Fetching categories...');
+      const response = await categoriesAPI.getAll();
+      console.log('🌐 Categories response:', response.data);
+      setCategories(response.data);
+    } catch (error) {
+      console.error('❌ Error fetching categories:', error);
+      console.error('❌ Error response:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
+      setCategories([]);
+    }
+  }, []);
+
+  const testBackendConnection = useCallback(async () => {
+    try {
+      console.log('🔗 Testing backend connection...');
+      const response = await fetch('http://localhost:3000/api/health');
+      console.log('✅ Backend is accessible:', response.status);
+    } catch (error) {
+      console.error('❌ Backend connection failed:', error);
+      console.log('💡 Make sure your backend server is running on port 3000');
+    }
+  }, []);
+
   useEffect(() => {
     fetchMovies();
     fetchCategories();
     testBackendConnection();
-  }, [filters, fetchMovies, fetchCategories, testBackendConnection]);
+  }, [fetchMovies, fetchCategories, testBackendConnection]);
 
   // Refresh movies when component comes into focus (e.g., after adding a movie)
   useEffect(() => {
@@ -116,67 +188,6 @@ const MovieList = () => {
     setSearchParams(newSearchParams);
   };
 
-  const fetchMovies = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = {
-        search: filters.search,
-        category: filters.category,
-        sortBy: filters.sortBy,
-        sortOrder: filters.sortOrder
-      };
-      
-      console.log('🎬 Fetching movies with params:', params);
-      const response = await moviesAPI.getAll(params);
-      console.log('🎬 Movies API response:', response);
-      console.log('🎬 Movies data:', response.data);
-      
-      const moviesData = response.data.movies || response.data;
-      console.log('🎬 Final movies array:', moviesData);
-      console.log('🎬 Number of movies:', moviesData.length);
-      
-      if (moviesData.length > 0) {
-        console.log('🎬 First movie sample:', {
-          id: moviesData[0].id,
-          title: moviesData[0].title,
-          image: moviesData[0].image ? moviesData[0].image.substring(0, 50) + '...' : 'No image',
-          imageLength: moviesData[0].image ? moviesData[0].image.length : 0
-        });
-      }
-      
-      setMovies(moviesData);
-    } catch (error) {
-      console.error('❌ Error fetching movies:', error);
-      console.error('❌ Error response:', error.response?.data);
-      console.error('❌ Error status:', error.response?.status);
-      
-      // Show user-friendly error
-      if (error.response?.status === 404) {
-        console.log('❌ API endpoint not found - check if backend is running');
-      } else if (error.code === 'ERR_NETWORK') {
-        console.log('❌ Network error - cannot connect to backend');
-      }
-      
-      setMovies([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters]);
-
-  const fetchCategories = useCallback(async () => {
-    try {
-      console.log('🌐 Fetching categories...');
-      const response = await categoriesAPI.getAll();
-      console.log('🌐 Categories response:', response.data);
-      setCategories(response.data);
-    } catch (error) {
-      console.error('❌ Error fetching categories:', error);
-      console.error('❌ Error response:', error.response?.data);
-      console.error('❌ Error status:', error.response?.status);
-      setCategories([]);
-    }
-  }, []);
-
   const handleFilterChange = (key, value) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
@@ -188,17 +199,6 @@ const MovieList = () => {
     });
     setSearchParams(newSearchParams);
   };
-
-  const testBackendConnection = useCallback(async () => {
-    try {
-      console.log('🔗 Testing backend connection...');
-      const response = await fetch('http://localhost:3000/api/health');
-      console.log('✅ Backend is accessible:', response.status);
-    } catch (error) {
-      console.error('❌ Backend connection failed:', error);
-      console.log('💡 Make sure your backend server is running on port 3000');
-    }
-  }, []);
 
   if (loading) {
     return <Loader text="Loading movies..." />;

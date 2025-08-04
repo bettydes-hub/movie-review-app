@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
@@ -23,12 +23,7 @@ const EditMovie = () => {
     image: ''
   });
 
-  useEffect(() => {
-    fetchMovie();
-    fetchCategories();
-  }, [id]);
-
-  const fetchMovie = async () => {
+  const fetchMovie = useCallback(async () => {
     try {
       const response = await moviesAPI.getById(id);
       const movieData = response.data;
@@ -49,16 +44,21 @@ const EditMovie = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await categoriesAPI.getAll();
       setCategories(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchMovie();
+    fetchCategories();
+  }, [fetchMovie, fetchCategories]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
