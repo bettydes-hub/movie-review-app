@@ -8,7 +8,7 @@ import ImageUpload from '../components/ImageUpload';
 
 const AddMovie = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   
